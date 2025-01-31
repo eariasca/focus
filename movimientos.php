@@ -51,9 +51,6 @@ if (!isset($_SESSION['user_id'])) {//Redireccionamos al formulario de ingreso en
                             <a class="nav-link" href="gastos/gastos.php">GASTOS</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="movimientos.php">MOVIMIENTOS</a>
-                        </li>
-                        <li class="nav-item">
                             <a class="nav-link" href="sesion.php">CERRAR SESIÓN</a>
                         </li>
                     </ul>
@@ -62,48 +59,58 @@ if (!isset($_SESSION['user_id'])) {//Redireccionamos al formulario de ingreso en
     </center>
         <!-- Fin de la barra de navegación -->
         <main>
-            <section class="login_box_area section_gap">
-                <div class="container">
-                    <center>
-                    <div class="row">
-                        <div class="col-lg-12 col-md-12 col-sm-12">
-                            <h1>Bienvenido al Gestor Finaciero</h1>
-                            <h6>Este programa te permitirá gestionar tu dinero de manera eficiente, registrando tanto tus ingresos como tus gastos esenciales. A partir de la información que ingreses, obtendrás un registro detallado de tu presupuesto mensual, lo que te ayudará a tener un control más claro sobre tus finanzas.</h6>
-                            <br><br>
-                        </div>
-                        <hr>
-                        <div class="row"> 
-                            <div class="card-body">
-                                <h1>Monto Actual</h1>
-                            </div>
-                        </div>
-                        <div class="col-lg-12 col-md-12 col-sm-12 d-flex justify-content-center align-items-center">
-                            <div class="row">
-                                <div class="card-body col-lg-6">
-                                    <img class="custom-image img-fluid" src="img/peso.jpg" style="width: 80px; height:auto;" alt="Imagen de inicio">
-                                </div>
-                                <div class="card-body col-lg-6 align-items-center">
-                                    <h1>$ 0</h1>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <hr>
-                    <div class="container">
-                        <center>
-                            <div class="row">
-                                <div class="card-body ">
-                                    <button type="button" class="btn btn-morado">INGRESOS</button>
-                                    <button type="button" class="btn btn-morado">GASTOS</button>
-                                    <button type="button" class="btn btn-morado">MOVIMIENTOS</button>
-                                </div>
-                            </div>
-                        </center>
-                    </div>
+            <center>
+        <div class="col-md-6 bg-white">
+        <table class="table table-bordered table-striped" id="datatable" style="width:100%">
+            <thead>
+                <tr style="color: black;">
                 </center>
-                </div>
-            </section>
-            <hr>
+            <center>
+                <th>Id</th>
+                <th>tipo</th>
+                <th>Categoria</th>
+                <th>Valor</th>
+                <th>Acciones</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                    <?php
+                    include('db.php');
+                    /* Este código está ejecutando una consulta SQL para seleccionar todas las filas de la tabla
+                      "productos" en la base de datos. La consulta se almacena en la variable ``. */
+                      if (!isset($_SESSION['user_id'])) {
+                        header("Location: index.php");
+                        exit();
+                    }
+                    
+                    $user_id = $_SESSION['user_id'];
+                    $stmt = $mysqli->prepare("SELECT ingresos, gastos, categoria FROM gestor WHERE user_id = $_SESSION");
+                    $stmt->bind_param("i", $user_id);
+                    $stmt->execute();
+                    $result = $stmt->get_result();
+                    
+
+                    while ($row = mysqli_fetch_assoc($result_tasks)) {
+                        ?>
+                        <tr style="color: black;">
+                            <td><?php echo $row['id']; ?></td>
+                            <td><?php echo $row['ingresos']; ?></td>
+                            <td><?php echo $row['gastos']; ?></td>
+                            <td><?php echo $row['categoria']; ?></td>
+                            <td>
+                                <a href="edit.php?id=<?php echo $row['id'] ?>" class="btn btn-secondary">
+                                    <i class="fa fa-pencil" title="Editar" aria-hidden="true"></i>
+                                </a>
+                                <a href="#" onclick="eliminarProducto('<?php echo $row['id'] ?>');" class="btn btn-danger">
+                                    <i class="fa fa-trash" title="Eliminar" aria-hidden="true"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    <?php } ?>
+                </tbody>
+        </table>
+    </div>
         </main>
         <footer class="custom-footer">
             <div class="container text-center">

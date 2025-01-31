@@ -9,7 +9,7 @@ if(isset($_POST['inicio'])){
     if($row=mysqli_fetch_assoc($resultado3)){
         $user_id = $row['id'];//capturamos id ususario
         //Iniciamos sesion del usuario para validar el ingreso
-        $_SESSION['usuario'] = $user_id;
+        $_SESSION['user_id'] = $user_id;
         header('Location: index.php');
         exit();
     }else{
